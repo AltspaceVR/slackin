@@ -1,116 +1,81 @@
+![](https://github.com/zeit/art/blob/e081cf46e6609b51ac485dcc337ac6644c0da5e7/slackin/repo-banner.png)
 
-# slackin
+## Features
 
-A little server that enables public access
-to a Slack server. Like Freenode, but on Slack.
+- A landing page you can point users to fill in their emails and receive an invite (`https://slack.yourdomain.com`)
+- An `<iframe>` badge to embed on any website that shows connected users in *realtime* with socket.io.
+- A SVG badge that works well from static mediums (like GitHub README pages)
 
-It provides
+Check out the [Demo](https://slackin-spzhjhzdnp.now.sh/) or read more about the [motivations and history](http://rauchg.com/slackin) behind Slackin.
 
-- A landing page you can point users to fill in their
-  emails and receive an invite (`http://slack.yourdomain.com`)
-- An `<iframe>` badge to embed on any website
-  that shows connected users in *realtime* with socket.io.
-- A SVG badge that works well from static mediums
-  (like GitHub README pages)
+## Usage
 
-Read more about the [motivations and history](http://rauchg.com/slackin) behind Slackin.
-
-## How to use
-
-### Server
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/rauchg/slackin/tree/0.5.1)
-
-Or install it and launch it on your server:
+Set up [Now](https://zeit.co/now) on your device and run this command:
 
 ```bash
-$ npm install -g slackin
-$ slackin "your-slack-subdomain" "your-slack-token"
+$ now -e SLACK_API_TOKEN="<token>" -e SLACK_SUBDOMAIN="<team-name>" rauchg/slackin
 ```
 
-You can find your API token at [api.slack.com/web](https://api.slack.com/web) – note that the user you use to generate the token must be an admin. You may want to create a dedicated `@slackin-inviter` user (or similar) for this.
+Other platforms:
 
-The available options are:
+- [Heroku](https://heroku.com/deploy?template=https://github.com/rauchg/slackin/tree/master)
+- [Azure](https://azuredeploy.net/)
+- [OpenShift](https://github.com/rauchg/slackin/wiki/OpenShift)
+- [IBM Bluemix](https://bluemix.net/deploy?repository=https://github.com/rauchg/slackin)
 
-```
-Usage: slackin [options] <slack-subdomain> <api-token>
+### Tips
 
-Options:
+Your team id is what you use to access your login page on Slack (eg: https://**{this}**.slack.com).
 
-  -h, --help               output usage information
-  -V, --version            output the version number
-  -p, --port <port>        Port to listen on [$PORT or 3000]
-  -c, --channels [<chan>]  One or more comma-separated channel names to allow single-channel guests [$SLACK_CHANNELS]
-  -i, --interval <int>     How frequently (ms) to poll Slack [$SLACK_INTERVAL or 1000]
-  -s, --silent             Do not print out warns or errors
-```
+You can find or generate your API test token at [api.slack.com/web](https://api.slack.com/web) – note that the user you use to generate the token must be an admin. You need to create a dedicated `@slackin-inviter` user (or similar), mark that user an admin, and use a test token from that dedicated admin user.  Note that test tokens have actual permissions so you do not need to create an OAuth 2 app. Also check out the Slack docs on [generating a test token](https://get.slack.help/hc/en-us/articles/215770388-Creating-and-regenerating-API-tokens).
 
-**Important: if you use Slackin in single-channel mode, you'll only be
+**Important:** If you use Slackin in single-channel mode, you'll only be
 able to invite as many external accounts as paying members you have
 times 5. If you are not getting invite emails, this might be the reason.
 Workaround: sign up for a free org, and set up Slackin to point to it
-(all channels will be visible).**
+(all channels will be visible).
 
-### Realtime Badge
+### Badges
 
-[![](https://cldup.com/IaiPnDEAA6.gif)](http://slack.socket.io)
-
-```html
-<script async defer src="http://slackin.yourhost.com/slackin.js"></script>
-```
-
-or for the large version, append `?large`:
+#### Realtime ([demo](https://cldup.com/IaiPnDEAA6.gif))
 
 ```html
-<script async defer src="http://slackin.yourhost.com/slackin.js?large"></script>
+<script async defer src="https://slack.yourdomain.com/slackin.js"></script>
+<!-- append "?" to the URL for the large version -->
 ```
 
-### SVG
-
-[![](https://cldup.com/jWUT4QFLnq.png)](http://slack.socket.io)
+#### SVG ([demo](https://cldup.com/jWUT4QFLnq.png))
 
 ```html
-<img src="http://slackin.yourhost.com/badge.svg">
+<img src="https://slack.yourdomain.com/badge.svg">
 ```
-
-### Landing page
-
-[![](https://cldup.com/WIbawiqp0Q.png)](http://slack.socket.io)
-
-Point to `http://slackin.yourhost.com`.
-
-**Note:** the image for the logo of the landing page
-is retrieved from the Slack API. If your organization
-doesn't have one configured, it won't be shown.
 
 ## API
 
-Requiring `slackin` as a module will return
-a `Function` that creates a `HTTP.Server` instance
-that you can manipulate.
+Loading `slackin` will return a `Function` that creates a `HTTP.Server` instance:
 
 ```js
-require('slackin')({
-  token: 'yourtoken', // required
+import slackin from 'slackin'
+
+slackin.default({
+  token: 'yourtoken',                             // required
   interval: 1000,
-  org: 'your-slack-subdomain', // required
-  channels: 'channel,channel,...' // for single channel mode
-  silent: false // suppresses warnings
-}).listen(3000);
+  org: 'your-slack-subdomain',                    // required
+  path: '/some/path/you/host/slackin/under/',     // defaults to '/'
+  channels: 'channel,channel,...',                // for single channel mode
+  silent: false                                   // suppresses warnings
+}).listen(3000)
 ```
 
-This will show response times from Slack and how many
-online users you have on the console.
+This will show response times from Slack and how many online users you have on the console. The returned `http.Server` has an `app` property that is the `express` application that you can define or override routes on.
 
-By default logging is enabled.
+All the metadata for your organization can be fetched via a JSON HTTP request to `/data`.
 
-## Credits
+## Caught a Bug?
 
-- The SVG badge generation was taken from the
-excellent [shields](https://github.com/badges/shields) project.
-- The button CSS is based on
-[github-buttons](https://github.com/mdo/github-buttons).
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your own GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local device
+2. Uninstall slackin if it's already installed: `npm uninstall -g slack`
+3. Link it to the global module directory: `npm link`
+4. Transpile the source code and watch for changes: `npm start`
 
-## License
-
-MIT
+Yey! Now can use the `slack` command everywhere.
