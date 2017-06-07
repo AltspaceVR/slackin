@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+html, body, * { background-color: #F7F7F7; font-family: 'Open Sans', sans-serif !important; }
+div.splash { margin: 10rem auto; }
+#invite button { background-color: #1ECED5; text-transform: capitalize; font-size: 1.8rem; }
+.status b.active, p.signin a { color: #1ECED5 !important;  }
+p.signin a:hover { color: #F7F7F7 !important; background-color: #1ECED5 !important; }
+.signin { font-size: 1.8rem !important; }
+input, input:focus { color: #212A30 !important; }
+
