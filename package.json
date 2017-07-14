@@ -59,7 +59,7 @@
     "test": "mocha && eslint lib/**",
     "postinstall": "gulp",
     "build": "gulp",
-    "start": "chmod +x bin/slackin && node ./bin/slackin --css=/assets/custom.css"
+    "start": "chmod +x bin/slackin && node ./bin/slackin --css=https://fonts.googleapis.com/css?family=Varela+Round,/assets/custom.css"
   },
   "now": {
     "files": [
