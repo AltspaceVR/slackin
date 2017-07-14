@@ -59,7 +59,7 @@
     "test": "mocha && eslint lib/**",
     "postinstall": "gulp",
     "build": "gulp",
-    "start": "chmod +x bin/slackin && ./bin/slackin"
+    "start": "chmod +x bin/slackin && node ./bin/slackin --css=/assets/custom.css"
   },
   "now": {
     "files": [
